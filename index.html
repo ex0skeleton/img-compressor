@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Image Wiz | Image Compressor</title>
+<meta name="description" content="Private batch image compression with custom file size limits, high quality settings and ZIP downloads.">
+<meta name="theme-color" content="#101011"><meta property="og:title" content="Image Wiz | Image Compressor"><meta property="og:description" content="Smaller images. More possibilities. Compress privately in your browser."><meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="css/fonts.css"><link rel="stylesheet" href="css/styles.css">
+<script defer src="js/sounds.js"></script><script defer src="js/zip.js"></script><script defer src="js/compressor.js"></script><script defer src="js/app.js"></script><script defer src="js/editor.js"></script>
+</head><body>
+<header><a class="brand" href="#compressor"><span class="logo">▧</span> Image <b>Wiz</b><small>IMAGE COMPRESSOR</small></a><button id="sound" aria-pressed="true">♫ Sound on</button></header>
+<main id="compressor">
+<div class="workspace">
+<section class="panel queue">
+<div class="heading"><h2>Your images <span id="count">0</span></h2><div class="heading-actions"><button id="add-more" hidden>＋ Add more images</button><button id="clear" class="quiet">Clear all</button></div></div>
+<div id="drop" class="drop"><div class="upload">↥</div><h3>Drop your images here</h3><p>or choose a batch from your device</p><button id="browse" class="primary">＋ Choose images</button><small>JPG, PNG & WebP · Up to 50 images · 30 MB each</small><input hidden id="files" type="file" multiple accept="image/jpeg,image/png,image/webp"></div>
+<section id="editor" hidden aria-label="Image editor">
+<div class="editor-toolbar"><strong id="editor-name"></strong><button id="close-view">Close view</button></div>
+<div class="editor-tools"><button id="show-original" aria-pressed="false">Original</button><button id="show-result" aria-pressed="true">Live result</button><button id="crop-toggle" aria-pressed="false">Crop</button><button id="reset-crop">Reset crop</button></div>
+<div id="stage"><img id="editor-image" alt="Selected image preview"><canvas id="crop-overlay" hidden tabindex="0" aria-label="Draw crop rectangle with mouse or touch. Use numeric crop fields as a keyboard alternative."></canvas></div>
+<div id="crop-controls" hidden><div class="crop-fields">
+<label>X (px)<input id="crop-x" type="number" min="0" value="0"></label><label>Y (px)<input id="crop-y" type="number" min="0" value="0"></label><label>Width (px)<input id="crop-w" type="number" min="1"></label><label>Height (px)<input id="crop-h" type="number" min="1"></label></div>
+<div class="editor-tools"><button id="apply-crop" class="primary">Apply crop</button><button id="cancel-crop">Cancel</button></div></div>
+<p id="editor-status" role="status"></p>
+</section><div id="notice" role="alert" hidden></div><div id="items"></div><p id="empty" class="empty"></p>
+<div id="progress-area" hidden><div class="heading"><span id="progress-label"></span><button id="cancel" class="quiet">Stop batch</button></div><progress id="progress" max="100" value="0"></progress></div>
+<div id="summary" role="status" hidden></div><div class="actions"><button id="download-all" disabled>↓ Download ZIP</button><small id="total">No images added</small></div>
+</section>
+<aside class="panel settings" aria-label="Compression settings">
+<fieldset id="settings">
+<label for="quality">Compression quality</label><select id="quality"><option value="0.92">High Quality (recommended)</option><option value="0.8">Balanced</option><option value="0.65">Smallest file</option><option value="custom">Custom quality</option></select>
+<div id="custom-quality" hidden><label for="quality-range">Quality <output id="quality-value">92%</output></label><input id="quality-range" type="range" min="10" max="100" value="92"></div>
+
+<label for="target">Maximum size per image</label><select id="target"><option value="0">No limit (preserve dimensions)</option><option value="1000000">Under 1 MB</option><option value="500000">Under 500 KB</option><option value="200000">Under 200 KB</option><option value="100000">Under 100 KB</option><option value="custom">Custom size</option></select>
+<div id="custom-size" class="inline" hidden><input id="size" type="number" min="1" step="any" value="1" aria-label="Custom maximum size"><select id="unit" aria-label="Size unit"><option value="1000000">MB</option><option value="1000">KB</option></select></div>
+
+<label for="format">Output format</label><select id="format"><option value="auto">Auto (JPEG / transparent WebP)</option><option value="image/jpeg">JPEG (best compatibility)</option><option value="image/webp">WebP (compact and transparent)</option><option value="image/png">PNG (lossless encoding)</option></select>
+
+<label for="resolution">Output resolution</label><select id="resolution"><option value="original">Original size</option><option value="1200x1200">1200 × 1200</option><option value="1920x1080">1920 × 1080</option><option value="1080x1920">1080 × 1920</option><option value="custom">Custom dimensions</option></select>
+<div id="dimensions" class="inline" hidden><label>Width (px)<input id="width" type="number" min="1" max="12000" value="1200"></label><label>Height (px)<input id="height" type="number" min="1" max="12000" value="1200"></label></div>
+<div id="fit-field" hidden><label for="fit">Fit image</label><select id="fit"><option value="cover">Fill dimensions (center crop)</option><option value="contain">Fit inside (keep proportions)</option><option value="stretch">Stretch to exact dimensions</option></select></div><div id="edge-field"><label for="max-edge">Maximum long edge</label><select id="max-edge"><option value="0">Original dimensions</option><option value="3840">3840 px</option><option value="2560">2560 px</option><option value="1920">1920 px</option><option value="1280">1280 px</option></select>
+</div></fieldset><button id="compress" class="primary full" disabled>Compress images ↗</button></aside>
+</div>
+</main><button id="help" class="help" aria-label="Help and image compression information" aria-expanded="false" aria-controls="help-dialog">?</button>
+<dialog id="help-dialog"><div class="heading"><h2>Help</h2><button id="close-help">Close</button></div>
+<ul>
+<li>High Quality prioritizes detail. Savings vary by image.</li>
+<li>A strict limit may lower quality or dimensions. 1 MB = 1,000,000 bytes. Successful target results are strictly below the selected limit.</li>
+<li>JPEG fills transparency with white. PNG ignores quality; size targets use resizing.</li>
+<li>Click an image thumbnail to enter view mode. Settings apply live to the selected image. Compress images applies settings to the batch.</li>
+<li>Crop uses original image pixels. Drag a rectangle or enter X, Y, width and height, then Apply crop. Each image keeps its own crop.</li>
+<li>Fill dimensions makes an exact size by cropping centrally. Fit inside preserves proportions and may produce a smaller size on one side. Stretch changes proportions. Strict size limits may reduce the requested resolution.</li>
+<li>Live result shows an actual encoded result, including its size and dimensions. Wait until the preview is ready before downloading. Original switches back to the source image.</li>
+<li>Files stay on your device. Originals remain untouched. Re-encoding removes EXIF metadata; unchanged originals retain metadata.</li>
+<li>Still JPEG, PNG and WebP only. Animated PNG/WebP are rejected. Up to 50 files, 30 MB each, 150 MB per batch, 24 MP and 12,000 px per side.</li>
+<li>Stop batch preserves completed downloads. Smaller batches work better on phones.</li>
+</ul></dialog>
+<div id="achievement" role="status" hidden><span class="trophy">✓</span><div><strong>Your file is ready to download.</strong><span id="achievement-detail"></span></div><button id="dismiss" aria-label="Dismiss notification">×</button></div>
+<dialog id="preview"><div class="heading"><h2 id="preview-title">Compare image</h2><button id="close-preview">Close ×</button></div><div class="comparison"><figure><figcaption>Original</figcaption><img id="before" alt="Original image"></figure><figure><figcaption>Compressed</figcaption><img id="after" alt="Compressed image"></figure></div><p>Fit-to-screen preview. Check downloaded files at full size for fine detail.</p></dialog>
+</body></html>
