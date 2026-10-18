@@ -76,7 +76,7 @@ function readOptions() {
   let width=0,height=0;
   if($('resolution').value!=='original') {
     width=Number($('width').value);height=Number($('height').value);
-    if(!Number.isInteger(width)||!Number.isInteger(height)||width<1||height<1||Math.max(width,height)>12000||width*height>24000000)throw Error('Use whole dimensions from 1 to 12,000 px, up to 24 MP.');
+    if(!Number.isSafeInteger(width)||!Number.isSafeInteger(height)||width<1||height<1)throw Error('Enter positive whole numbers for width and height.');
   }
   return {target,width,height,fit:$('fit').value,quality:$('quality').value==='custom'?Number($('quality-range').value)/100:Number($('quality').value),format:$('format').value,edge:Number($('max-edge').value)};
 }

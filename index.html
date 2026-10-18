@@ -36,7 +36,7 @@
 <label for="format">Output format</label><select id="format"><option value="auto">Auto (JPEG / transparent WebP)</option><option value="image/jpeg">JPEG (best compatibility)</option><option value="image/webp">WebP (compact and transparent)</option><option value="image/png">PNG (lossless encoding)</option></select>
 
 <label for="resolution">Output resolution</label><select id="resolution"><option value="original">Original size</option><option value="1200x1200">1200 × 1200</option><option value="1920x1080">1920 × 1080</option><option value="1080x1920">1080 × 1920</option><option value="custom">Custom dimensions</option></select>
-<div id="dimensions" class="inline" hidden><label>Width (px)<input id="width" type="number" min="1" max="12000" value="1200"></label><label>Height (px)<input id="height" type="number" min="1" max="12000" value="1200"></label></div>
+<div id="dimensions" class="inline" hidden><label>Width (px)<input id="width" type="number" min="1" value="1200"></label><label>Height (px)<input id="height" type="number" min="1" value="1200"></label></div>
 <div id="fit-field" hidden><label for="fit">Fit image</label><select id="fit"><option value="cover">Fill dimensions (center crop)</option><option value="contain">Fit inside (keep proportions)</option><option value="stretch">Stretch to exact dimensions</option></select></div><div id="edge-field"><label for="max-edge">Maximum long edge</label><select id="max-edge"><option value="0">Original dimensions</option><option value="3840">3840 px</option><option value="2560">2560 px</option><option value="1920">1920 px</option><option value="1280">1280 px</option></select>
 </div></fieldset><button id="compress" class="primary full" disabled>Compress images ↗</button></aside>
 </div>
@@ -51,7 +51,7 @@
 <li>Fill dimensions makes an exact size by cropping centrally. Fit inside preserves proportions and may produce a smaller size on one side. Stretch changes proportions. Strict size limits may reduce the requested resolution.</li>
 <li>Live result shows an actual encoded result, including its size and dimensions. Wait until the preview is ready before downloading. Original switches back to the source image.</li>
 <li>Files stay on your device. Originals remain untouched. Re-encoding removes EXIF metadata; unchanged originals retain metadata.</li>
-<li>Still JPEG, PNG and WebP only. Animated PNG/WebP are rejected. Up to 50 files, 30 MB each, 150 MB per batch, 24 MP and 12,000 px per side.</li>
+<li>Still JPEG, PNG and WebP only. Animated PNG/WebP are rejected. Up to 50 files, 30 MB each, 150 MB per batch.</li>
 <li>Stop batch preserves completed downloads. Smaller batches work better on phones.</li>
 </ul></dialog>
 <div id="achievement" role="status" hidden><span class="trophy">✓</span><div><strong>Your file is ready to download.</strong><span id="achievement-detail"></span></div><button id="dismiss" aria-label="Dismiss notification">×</button></div>

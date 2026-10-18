@@ -42,7 +42,6 @@ async function openEditor(item) {
     bitmap.close();
     if(state.selected !== item) return;
     editorSize = size;
-    if(size.width * size.height > 24000000 || Math.max(size.width,size.height)>12000) throw Error('Image exceeds the 24 MP / 12,000 px limit.');
     refreshEditor();
     if(!item.result) scheduleLive();
   } catch(e) { if(state.selected===item){$('editor-status').textContent=e.message;error(e.message);} }

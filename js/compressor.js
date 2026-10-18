@@ -34,7 +34,6 @@ window.ImageCompressor = (() => {
     const canvas = document.createElement('canvas');
     try {
       const ow = bitmap.width, oh = bitmap.height;
-      if (ow * oh > 24000000 || Math.max(ow, oh) > 12000) throw Error('Image exceeds the 24 MP / 12,000 px safety limit.');
       const crop = options.crop || {x: 0, y: 0, width: 1, height: 1};
       let sx = crop.x * ow, sy = crop.y * oh;
       let sw = crop.width * ow, sh = crop.height * oh;
@@ -45,9 +44,6 @@ window.ImageCompressor = (() => {
       let width = Math.max(1, Math.round(sw)), height = Math.max(1, Math.round(sh));
       if (options.width && options.height) {
         width = options.width; height = options.height;
-        if (width * height > 24000000 || Math.max(width, height) > 12000) {
-          throw Error('Output exceeds the 24 MP / 12,000 px limit.');
-        }
         if (options.fit === 'contain') {
           const ratio = Math.min(width / sw, height / sh);
           width = Math.max(1, Math.round(sw * ratio));
@@ -69,6 +65,7 @@ window.ImageCompressor = (() => {
       const draw = () => {
         canvas.width = width; canvas.height = height;
         const ctx = canvas.getContext('2d');
+        if (!ctx) throw Error('The browser could not allocate an image canvas. Try a smaller output resolution.');
         if (format === 'image/jpeg') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, width, height); }
         ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(bitmap, sx, sy, sw, sh, 0, 0, width, height);
@@ -76,7 +73,8 @@ window.ImageCompressor = (() => {
       const encode = async q => {
         check(); await pause();
         const blob = await new Promise(resolve => canvas.toBlob(resolve, format, q));
-        if (!blob || blob.type !== format) throw Error('This browser cannot encode the selected output format.');
+        if (!blob) throw Error('The browser could not encode this image at the requested resolution. Try a smaller output resolution.');
+        if (blob.type !== format) throw Error('This browser cannot encode the selected output format.');
         check(); return blob;
       };
       draw(); result = await encode(quality);
